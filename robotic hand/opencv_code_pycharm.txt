@@ -1,0 +1,28 @@
+import cvzone
+import cv2
+from cvzone.HandTrackingModule import HandDetector
+
+cap=cv2.VideoCapture(0)
+cap.set(3,1280)
+cap.set(4,720)
+
+detector = HandDetector(detectionCon=0.8 , maxHands=1)
+startDist = None
+scale=0
+cx,cy = 500,500
+mySerial =cvzone.SerialObject("COM5",9600,1)
+while True:
+    success, img = cap.read()
+    img = detector.findHands(img)
+    lmList , bbox = detector.findPosition(img)
+    if lmList:
+        fingers = detector.fingersUp()
+        print(fingers)
+        mySerial.sendData(fingers)
+
+    if len(hands)==1:
+       print(detector.fingersUp(hands[0]),detector.fingersUp(hands[1]))
+
+    cv2.imshow("Image",img)
+    cv2.waitKey(1)
+
